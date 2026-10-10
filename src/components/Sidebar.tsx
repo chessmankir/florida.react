@@ -2,8 +2,18 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { getCurrentMonthRange } from "@/lib/date-range";
 
-const navigation = [
+function FlowerIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" className="size-4">
+      <path d="M12 10.2c-2.6-4.8-7.6-3.5-7 0 .4 2.3 3.4 2.8 5.3 2.1-1.9.7-3.6 3.2-2 5 2.5 2.6 5.7-.9 4.3-4.2 1.4 3.3 5.4 4.1 6.4.7.8-2.5-1.7-4.2-3.7-4.1 2-.1 4.3-2.2 3.1-4.6-1.8-3.1-5.8-.8-6.1 2.4-.3-3.2-4.4-4.8-6-1.7-1.1 2.2 1.1 4.3 3.1 4.5" fill="currentColor" opacity=".95"/>
+      <circle cx="12" cy="11" r="2.2" fill="currentColor"/>
+    </svg>
+  );
+}
+
+const staticNavigation = [
   { label: "Дашборд", href: "/dashboard", icon: "▦" },
   {
     label: "Продажи и товары",
@@ -11,10 +21,26 @@ const navigation = [
     match: "/analytics/products/profitability",
     icon: "↗",
   },
+  {
+    label: "Расходы и ДДС",
+    href: "/analytics/expenses?dateFrom=2026-09-01&dateTo=2026-09-30&page=1&limit=10",
+    match: "/analytics/expenses",
+    icon: "₽",
+  },
 ];
 
 export function Sidebar() {
   const pathname = usePathname();
+  const currentMonth = getCurrentMonthRange();
+  const navigation = [
+    ...staticNavigation,
+    {
+      label: "Flowwow",
+      href: `/analytics/flowwow/orders?dateFrom=${currentMonth.dateFrom}&dateTo=${currentMonth.dateTo}&page=1&limit=50`,
+      match: "/analytics/flowwow",
+      icon: <FlowerIcon />,
+    },
+  ];
 
   return (
     <aside className="border-b border-slate-200 bg-slate-950 px-4 py-5 text-white lg:sticky lg:top-0 lg:h-screen lg:w-72 lg:shrink-0 lg:border-b-0 lg:px-6 lg:py-8">
@@ -30,7 +56,9 @@ export function Sidebar() {
 
       <nav aria-label="Основная навигация" className="flex gap-2 overflow-x-auto lg:flex-col">
         {navigation.map((item) => {
-          const active = pathname === (item.match ?? item.href.split("?")[0]);
+          const active = item.match
+            ? pathname.startsWith(item.match)
+            : pathname === item.href.split("?")[0];
           return (
             <Link
               key={item.label}

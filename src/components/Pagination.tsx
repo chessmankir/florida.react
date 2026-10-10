@@ -1,11 +1,11 @@
-import { ProductsQuery } from "@/store/products-store";
+type PaginationQuery = { page: number; limit: number };
 
 type PaginationProps = {
-  query: ProductsQuery;
+  query: PaginationQuery;
   total: number;
   pageCount: number;
   disabled: boolean;
-  onUpdate: (patch: Partial<ProductsQuery>) => void;
+  onUpdate: (patch: Partial<PaginationQuery>) => void;
 };
 
 export function Pagination({ query, total, pageCount, disabled, onUpdate }: PaginationProps) {
