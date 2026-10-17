@@ -19,6 +19,8 @@ export type FlowwowOrder = {
   status: string | number;
   price: number;
   commission: number;
+  costPrice: number | null;
+  costPriceComplete: boolean;
   productsCount: number;
   products: string[];
 };
@@ -94,6 +96,8 @@ function normalize(raw: ApiRecord): FlowwowOrdersResponse {
         numeric(item.fixedCommissionAmount ?? item.fixedCommission ?? 0)
         + numeric(item.variableCommissionAmount ?? item.variableCommission ?? 0),
       ),
+      costPrice: item.costPriceAmount == null ? null : numeric(item.costPriceAmount),
+      costPriceComplete: Boolean(item.costPriceComplete),
       productsCount: numeric(item.productsCount ?? item.itemsCount ?? productRecords.reduce((sum, product) => sum + numeric(product.quantity ?? product.count ?? 1), 0)),
       products,
     } satisfies FlowwowOrder;

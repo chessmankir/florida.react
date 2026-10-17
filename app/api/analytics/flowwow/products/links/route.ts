@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const apiBaseUrl = process.env.ANALYTICS_API_URL ?? "http://127.0.0.1:3017";
+const apiBaseUrl = process.env.ANALYTICS_API_URL ?? "http://127.0.0.1:3025";
 
 export async function GET(request: NextRequest) {
   const upstreamUrl = new URL("/analytics/flowwow/products/links", apiBaseUrl);
@@ -14,6 +14,12 @@ export async function POST(request: NextRequest) {
     headers: { "content-type": "application/json" },
     body: await request.text(),
   });
+}
+
+export async function DELETE(request: NextRequest) {
+  const upstreamUrl = new URL("/analytics/flowwow/products/links", apiBaseUrl);
+  request.nextUrl.searchParams.forEach((value, key) => upstreamUrl.searchParams.set(key, value));
+  return forward(upstreamUrl, { method: "DELETE" });
 }
 
 async function forward(url: URL, init: RequestInit) {

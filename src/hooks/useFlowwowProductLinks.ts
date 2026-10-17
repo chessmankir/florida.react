@@ -1,15 +1,17 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { flowwowProductLinksStore, InventoryProduct } from "@/store/flowwow-product-links-store";
+import { BundleCalculation, flowwowProductLinksStore, InventoryBundle } from "@/store/flowwow-product-links-store";
 
-export function useFlowwowProductLinks(shopId: string, productId: string, open: boolean) {
+export function useFlowwowProductLinks(shopId: string, productId: string, flowwowPrice: number, open: boolean) {
   const [search, setSearch] = useState("");
-  const [options, setOptions] = useState<InventoryProduct[]>([]);
-  const [selected, setSelected] = useState<InventoryProduct[]>([]);
+  const [options, setOptions] = useState<InventoryBundle[]>([]);
+  const [selected, setSelected] = useState<InventoryBundle | null>(null);
   const [pending, setPending] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [calculation, setCalculation] = useState<BundleCalculation | null>(null);
+  const [calculationPending, setCalculationPending] = useState(false);
 
   useEffect(() => {
     if (!open) return;
@@ -17,7 +19,7 @@ export function useFlowwowProductLinks(shopId: string, productId: string, open: 
     setError(null);
     void flowwowProductLinksStore.load(shopId, productId)
       .then(setSelected)
-      .catch((reason) => setError(reason instanceof Error ? reason.message : "Не удалось загрузить привязки"))
+      .catch((reason) => setError(reason instanceof Error ? reason.message : "Не удалось загрузить привязку"))
       .finally(() => setPending(false));
   }, [open, productId, shopId]);
 
@@ -34,36 +36,48 @@ export function useFlowwowProductLinks(shopId: string, productId: string, open: 
     return () => { window.clearTimeout(timeout); controller.abort(); };
   }, [open, search]);
 
-  const add = useCallback((id: string) => {
-    const item = options.find((option) => option.id === id);
-    if (item) setSelected((current) => {
-      const existing = current.find((value) => value.id === id);
-      return existing
-        ? current.map((value) => value.id === id ? { ...value, quantity: value.quantity + 1 } : value)
-        : [...current, { ...item, quantity: 1 }];
-    });
-  }, [options]);
+  useEffect(() => {
+    if (!open || !selected) { setCalculation(null); return; }
+    let active = true;
+    setCalculationPending(true);
+    void flowwowProductLinksStore.calculate(selected.id, flowwowPrice)
+      .then((value) => { if (active) setCalculation(value); })
+      .catch((reason) => { if (active) setError(reason instanceof Error ? reason.message : "Не удалось рассчитать букет"); })
+      .finally(() => { if (active) setCalculationPending(false); });
+    return () => { active = false; };
+  }, [flowwowPrice, open, selected]);
 
-  const remove = useCallback((id: string) => setSelected((current) => current.filter((item) => item.id !== id)), []);
-  const changeQuantity = useCallback((id: string, delta: number) => {
-    setSelected((current) => current.map((item) => item.id === id
-      ? { ...item, quantity: Math.max(1, item.quantity + delta) }
-      : item));
-  }, []);
-
-  const save = useCallback(async () => {
+  const choose = useCallback(async (bundleId: string) => {
+    const item = options.find((option) => option.id === bundleId);
+    if (!item) return false;
     setSaving(true);
     setError(null);
     try {
-      setSelected(await flowwowProductLinksStore.save(shopId, productId, selected));
+      setSelected(await flowwowProductLinksStore.save(shopId, productId, item.id));
       return true;
     } catch (reason) {
-      setError(reason instanceof Error ? reason.message : "Не удалось сохранить привязки");
+      setError(reason instanceof Error ? reason.message : "Не удалось сохранить привязку");
       return false;
     } finally {
       setSaving(false);
     }
-  }, [productId, selected, shopId]);
+  }, [options, productId, shopId]);
 
-  return { search, setSearch, options, selected, pending, saving, error, add, remove, changeQuantity, save };
+  const remove = useCallback(async () => {
+    setSaving(true);
+    setError(null);
+    try {
+      await flowwowProductLinksStore.remove(shopId, productId);
+      setSelected(null);
+      setCalculation(null);
+      return true;
+    } catch (reason) {
+      setError(reason instanceof Error ? reason.message : "Не удалось отвязать букет");
+      return false;
+    } finally {
+      setSaving(false);
+    }
+  }, [productId, shopId]);
+
+  return { search, setSearch, options, selected, pending, saving, error, calculation, calculationPending, choose, remove };
 }

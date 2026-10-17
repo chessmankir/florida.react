@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
-  const apiBaseUrl = process.env.ANALYTICS_API_URL ?? "http://127.0.0.1:3017";
+  const apiBaseUrl = process.env.ANALYTICS_API_URL ?? "http://127.0.0.1:3025";
   const upstreamUrl = new URL("/analytics/moysklad/inventory", apiBaseUrl);
   request.nextUrl.searchParams.forEach((value, key) => upstreamUrl.searchParams.set(key, value));
   try {

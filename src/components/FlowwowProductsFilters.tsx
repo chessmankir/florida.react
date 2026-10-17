@@ -75,6 +75,7 @@ export function FlowwowProductsFilters({ query, shops, disabled, onUpdate }: Pro
           onChange={(event) => onUpdate({ sortBy: event.target.value as FlowwowProductsQuery["sortBy"], page: 1 })}
         >
           <option value="sales">Выручка</option>
+          <option value="profit">Прибыль</option>
           <option value="views">Просмотры</option>
           <option value="stock">Остаток</option>
         </select>

@@ -24,7 +24,7 @@ export function FlowwowProductsAnalytics() {
       </div>
       <div className="mb-5"><FlowwowProductsFilters query={query} shops={data?.shops ?? []} disabled={isPending} onUpdate={updateQuery} /></div>
       {error ? (
-        <div className="rounded-2xl border border-red-200 bg-red-50 p-6 text-sm text-red-700"><p className="font-semibold">Не удалось получить товары Flowwow</p><p className="mt-1">{error}. Проверьте маршрут backend на порту 3017.</p></div>
+        <div className="rounded-2xl border border-red-200 bg-red-50 p-6 text-sm text-red-700"><p className="font-semibold">Не удалось получить товары Flowwow</p><p className="mt-1">{error}. Проверьте маршрут backend на порту 3025.</p></div>
       ) : view === "grid" ? (
         <FlowwowProductsGrid products={data?.items ?? []} pending={isPending} onVisibilityChange={changeVisibility} />
       ) : (

@@ -28,7 +28,7 @@ export function FlowwowOrdersAnalytics() {
       </div>
       {areIndicatorsVisible && <div className="mb-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4"><MetricCard label="Заказов" value={data ? number.format(data.summary.ordersCount) : "—"} note={`${query.dateFrom} — ${query.dateTo}`} /><MetricCard label="Оборот" value={data ? money.format(data.summary.turnover) : "—"} note="За выбранный период" accent /><MetricCard label="Средний чек" value={data ? money.format(data.summary.averageCheck) : "—"} note="На один заказ" /><MetricCard label="Расходы" value={data ? money.format(data.summary.commissionExpenses) : "—"} note={data ? `${percent.format(commissionShare)}% от общей суммы продаж` : "Комиссии Flowwow за период"} /></div>}
       <div className="mb-4"><FlowwowOrdersFilters query={query} shops={data?.shops ?? []} disabled={isPending} onUpdate={updateQuery} /></div>
-      {error ? <div className="rounded-2xl border border-red-200 bg-red-50 p-6 text-sm text-red-700"><p className="font-semibold">Не удалось получить заказы Flowwow</p><p className="mt-1">{error}. Проверьте маршрут backend на порту 3017.</p></div> : <FlowwowOrdersTable items={data?.items ?? []} pending={isPending} />}
+      {error ? <div className="rounded-2xl border border-red-200 bg-red-50 p-6 text-sm text-red-700"><p className="font-semibold">Не удалось получить заказы Flowwow</p><p className="mt-1">{error}. Проверьте маршрут backend на порту 3025.</p></div> : <FlowwowOrdersTable items={data?.items ?? []} pending={isPending} />}
       {data && <Pagination query={query} total={data.total} pageCount={data.totalPages} disabled={isPending} onUpdate={updateQuery} />}
     </section>
   );

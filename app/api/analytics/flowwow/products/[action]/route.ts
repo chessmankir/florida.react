@@ -8,7 +8,7 @@ export async function POST(request: NextRequest, context: Context) {
     return NextResponse.json({ message: "Unsupported Flowwow product action" }, { status: 404 });
   }
 
-  const apiBaseUrl = process.env.ANALYTICS_API_URL ?? "http://127.0.0.1:3017";
+  const apiBaseUrl = process.env.ANALYTICS_API_URL ?? "http://127.0.0.1:3025";
   const upstreamUrl = new URL(`/analytics/flowwow/products/${action}`, apiBaseUrl);
   request.nextUrl.searchParams.forEach((value, key) => upstreamUrl.searchParams.set(key, value));
 

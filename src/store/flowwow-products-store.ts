@@ -2,7 +2,7 @@ export type FlowwowProductsQuery = {
   search: string;
   shopId: string;
   status: "all" | "active" | "hidden" | "archived";
-  sortBy: "sales" | "stock" | "views";
+  sortBy: "sales" | "stock" | "views" | "profit";
   sortDirection: "asc" | "desc";
   page: number;
   limit: number;
@@ -28,11 +28,14 @@ export type FlowwowProduct = {
   price: number;
   currencyCode: string;
   stock: number;
+  availableToAssemble: number | null;
   available: boolean;
   isActive: boolean;
   isArchived: boolean;
   discount: number;
   productionTime: number;
+  bundleId: string | null;
+  profitAmount: number | null;
   stats: FlowwowProductStats;
 };
 
@@ -95,11 +98,18 @@ function normalize(raw: ApiRecord): FlowwowProductsResponse {
       price: numeric(item.price),
       currencyCode: String(item.currencyCode ?? "RUB"),
       stock: numeric(item.stock),
+      availableToAssemble: item.availableToAssemble === null || item.availableToAssemble === undefined
+        ? null
+        : numeric(item.availableToAssemble),
       available: Boolean(item.available),
       isActive: Boolean(item.isActive),
       isArchived: Boolean(item.isArchived),
       discount: numeric(item.discount),
       productionTime: numeric(item.productionTime),
+      bundleId: item.bundleId ? String(item.bundleId) : null,
+      profitAmount: item.profitAmount === null || item.profitAmount === undefined
+        ? null
+        : numeric(item.profitAmount),
       stats: {
         purchase: numeric(stats.purchase),
         addToCart: numeric(stats.addToCart),
