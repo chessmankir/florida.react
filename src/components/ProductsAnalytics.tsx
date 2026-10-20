@@ -5,11 +5,13 @@ import { ProductsFilters } from "@/components/ProductsFilters";
 import { ProductsSummaryDashboard } from "@/components/ProductsSummaryDashboard";
 import { ProductsTable } from "@/components/ProductsTable";
 import { useProductProfitability } from "@/hooks/useProductProfitability";
+import { ProductsTabs } from "@/components/ProductsTabs";
 
 export function ProductsAnalytics() {
   const { query, data, error, isPending, updateQuery, changeSorting } = useProductProfitability();
   return (
     <section className="relative mx-auto max-w-[1500px]">
+      <ProductsTabs />
       <div className="mb-7 sm:pr-52"><p className="mb-2 text-sm font-semibold uppercase tracking-[0.16em] text-emerald-700">Продажи и товары</p><h1 className="text-3xl font-bold tracking-tight text-slate-950">Прибыльность товаров</h1><p className="mt-2 text-sm text-slate-500">Показатели ассортимента за выбранный период</p></div>
       <ProductsSummaryDashboard data={data} dateFrom={query.dateFrom} dateTo={query.dateTo} />
       <div className="mb-4"><ProductsFilters query={query} disabled={isPending} onUpdate={updateQuery} /></div>

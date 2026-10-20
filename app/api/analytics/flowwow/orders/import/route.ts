@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { backendAccountHeaders } from "@/lib/backend-account";
 
 export async function POST(request: NextRequest) {
   const apiBaseUrl = process.env.ANALYTICS_API_URL ?? "http://127.0.0.1:3025";
@@ -10,6 +11,7 @@ export async function POST(request: NextRequest) {
     const formData = await request.formData();
     const response = await fetch(upstreamUrl, {
       method: "POST",
+      headers: backendAccountHeaders(request),
       body: formData,
       signal: AbortSignal.timeout(60_000),
     });

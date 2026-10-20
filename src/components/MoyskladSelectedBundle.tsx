@@ -7,7 +7,7 @@ const money = new Intl.NumberFormat("ru-RU", { style: "currency", currency: "RUB
 
 export function MoyskladSelectedBundle({ bundle, calculation, flowwowPrice, pending }: { bundle: InventoryBundle | null; calculation: BundleCalculation | null; flowwowPrice: number; pending: boolean }) {
   const [isCompositionVisible, setIsCompositionVisible] = useState(true);
-  if (!bundle) return <p className="rounded-xl bg-slate-50 px-4 py-5 text-center text-sm text-slate-500">Букет пока не выбран</p>;
+  if (!bundle) return <p className="rounded-xl bg-slate-50 px-4 py-5 text-center text-sm text-slate-500">Техкарта пока не выбрана</p>;
 
   return <div className="rounded-xl border border-emerald-200 bg-emerald-50/60 px-4 py-3">
     <div className="flex items-center justify-between gap-3">

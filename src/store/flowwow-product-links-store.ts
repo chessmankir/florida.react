@@ -49,9 +49,9 @@ async function json(response: Response) {
 
 export const flowwowProductLinksStore = {
   async searchInventory(search: string, signal?: AbortSignal): Promise<InventoryBundle[]> {
-    const params = new URLSearchParams({ page: "1", limit: "10", type: "bundle", archived: "false", sortBy: "name", sortDirection: "asc" });
+    const params = new URLSearchParams({ page: "1", limit: "10" });
     if (search.trim()) params.set("search", search.trim());
-    const raw = object(await json(await fetch(`/api/analytics/moysklad/inventory?${params}`, { cache: "no-store", signal })));
+    const raw = object(await json(await fetch(`/api/analytics/moysklad/processing-plans?${params}`, { cache: "no-store", signal })));
     return (Array.isArray(raw.items) ? raw.items : []).map(bundle).filter((item): item is InventoryBundle => item !== null);
   },
 
@@ -64,10 +64,10 @@ export const flowwowProductLinksStore = {
     const raw = object(await json(await fetch("/api/analytics/flowwow/products/links", {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ shopId: Number(shopId), productId: Number(productId), bundleId }),
+      body: JSON.stringify({ shopId: Number(shopId), productId: Number(productId), processingPlanId: bundleId }),
     })));
     const saved = bundle(raw.bundle);
-    if (!saved) throw new Error("API не вернул сохранённый букет");
+    if (!saved) throw new Error("API не вернул сохранённую техкарту");
     return saved;
   },
 
@@ -80,7 +80,7 @@ export const flowwowProductLinksStore = {
 
   async calculate(bundleId: string, flowwowPrice: number): Promise<BundleCalculation> {
     const [componentsRaw, commissionRaw] = await Promise.all([
-      json(await fetch(`/api/analytics/moysklad/inventory/${encodeURIComponent(bundleId)}/components`, { cache: "no-store" })),
+      json(await fetch(`/api/analytics/moysklad/processing-plans/${encodeURIComponent(bundleId)}/materials`, { cache: "no-store" })),
       json(await fetch("/api/analytics/flowwow/commission/calculate", {
         method: "POST",
         headers: { "content-type": "application/json" },

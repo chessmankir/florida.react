@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { backendAccountHeaders } from "@/lib/backend-account";
 
 type Context = { params: Promise<{ action: string }> };
 
@@ -15,7 +16,7 @@ export async function POST(request: NextRequest, context: Context) {
   try {
     const response = await fetch(upstreamUrl, {
       method: "POST",
-      headers: { "content-type": "application/json" },
+      headers: backendAccountHeaders(request, { "content-type": "application/json" }),
       body: await request.text(),
       signal: AbortSignal.timeout(20_000),
     });

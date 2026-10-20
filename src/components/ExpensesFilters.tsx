@@ -10,10 +10,24 @@ const inputClassName = "h-11 rounded-xl border border-slate-200 bg-white px-3 te
 
 export function ExpensesFilters({ query, disabled, onUpdate }: ExpensesFiltersProps) {
   return (
-    <div className="grid gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:grid-cols-2 lg:max-w-2xl">
+    <div className="grid gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:grid-cols-3 lg:max-w-4xl">
       <label className="grid gap-1.5 text-xs font-semibold text-slate-500">
         Дата от
         <input className={inputClassName} type="date" value={query.dateFrom} max={query.dateTo} disabled={disabled} onChange={(event) => onUpdate({ dateFrom: event.target.value, page: 1 })} />
+      </label>
+      <label className="grid gap-1.5 text-xs font-semibold text-slate-500">
+        Тип
+        <select
+          className={inputClassName}
+          value={query.paymentType}
+          disabled={disabled}
+          onChange={(event) => onUpdate({ paymentType: event.target.value as ExpensesQuery["paymentType"], page: 1 })}
+        >
+          <option value="all">Все операции</option>
+          <option value="paymentout">Безналичные списания</option>
+          <option value="cashout">Расходы наличными</option>
+          <option value="loss">Списания</option>
+        </select>
       </label>
       <label className="grid gap-1.5 text-xs font-semibold text-slate-500">
         Дата до

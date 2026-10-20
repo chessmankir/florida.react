@@ -2,6 +2,8 @@ export type FlowwowProductsQuery = {
   search: string;
   shopId: string;
   status: "all" | "active" | "hidden" | "archived";
+  linkStatus: "all" | "linked" | "unlinked";
+  availability: "all" | "in_stock" | "out_of_stock";
   sortBy: "sales" | "stock" | "views" | "profit";
   sortDirection: "asc" | "desc";
   page: number;
@@ -57,6 +59,8 @@ export const defaultFlowwowProductsQuery: FlowwowProductsQuery = {
   search: "",
   shopId: "191599",
   status: "active",
+  linkStatus: "all",
+  availability: "all",
   sortBy: "sales",
   sortDirection: "desc",
   page: 1,
@@ -153,6 +157,8 @@ export const flowwowProductsStore = {
     const params = new URLSearchParams({
       shopId: query.shopId,
       status: query.status,
+      linkStatus: query.linkStatus,
+      availability: query.availability,
       sortBy: query.sortBy,
       sortDirection: query.sortDirection,
       page: String(query.page),

@@ -1,6 +1,7 @@
 export type ExpensesQuery = {
   dateFrom: string;
   dateTo: string;
+  paymentType: "all" | "paymentout" | "cashout" | "loss";
   page: number;
   limit: number;
 };
@@ -10,6 +11,7 @@ export type ExpenseSummary = {
   total: number;
   paymentOut: number;
   cashOut: number;
+  loss: number;
 };
 
 export type ExpenseCategory = {
@@ -30,6 +32,16 @@ export type ExpenseItem = {
   sum: number;
   vatSum: number;
   expenseItemName: string | null;
+  positions: ExpenseLossPosition[];
+};
+
+export type ExpenseLossPosition = {
+  id: string;
+  assortmentId: string | null;
+  name: string;
+  quantity: number;
+  price: number;
+  total: number;
 };
 
 export type ExpensesResponse = {
@@ -47,6 +59,7 @@ type ApiExpensesResponse = {
     totalMinor: string;
     paymentOutMinor: string;
     cashOutMinor: string;
+    lossMinor: string;
   };
   categories: Array<{
     expenseItemId: string;
@@ -65,6 +78,14 @@ type ApiExpensesResponse = {
     sumMinor: string;
     vatSumMinor: string;
     expenseItemName: string | null;
+    positions?: Array<{
+      id: string;
+      assortmentId: string | null;
+      name: string;
+      quantity: string;
+      priceMinor: string;
+      totalMinor: string;
+    }>;
   }>;
   pagination: ExpensesResponse["pagination"];
 };
@@ -79,6 +100,7 @@ type ExpensesState = {
 export const defaultExpensesQuery: ExpensesQuery = {
   dateFrom: "2026-09-01",
   dateTo: "2026-09-30",
+  paymentType: "all",
   page: 1,
   limit: 10,
 };
@@ -111,6 +133,7 @@ function normalize(data: ApiExpensesResponse): ExpensesResponse {
       total: money(data.summary.totalMinor),
       paymentOut: money(data.summary.paymentOutMinor),
       cashOut: money(data.summary.cashOutMinor),
+      loss: money(data.summary.lossMinor),
     },
     categories: data.categories.map((category) => ({
       expenseItemId: category.expenseItemId,
@@ -129,6 +152,14 @@ function normalize(data: ApiExpensesResponse): ExpensesResponse {
       sum: money(item.sumMinor),
       vatSum: money(item.vatSumMinor),
       expenseItemName: item.expenseItemName,
+      positions: (item.positions ?? []).map((position) => ({
+        id: position.id,
+        assortmentId: position.assortmentId,
+        name: position.name,
+        quantity: number(position.quantity),
+        price: money(position.priceMinor),
+        total: money(position.totalMinor),
+      })),
     })),
   };
 }
@@ -148,6 +179,7 @@ export const expensesStore = {
     const params = new URLSearchParams({
       dateFrom: query.dateFrom,
       dateTo: query.dateTo,
+      paymentType: query.paymentType,
       page: String(query.page),
       limit: String(query.limit),
     });

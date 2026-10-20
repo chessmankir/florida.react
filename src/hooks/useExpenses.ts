@@ -5,6 +5,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { defaultExpensesQuery, expensesStore, ExpensesQuery } from "@/store/expenses-store";
 
 const limits = [10, 25, 50];
+const paymentTypes = ["all", "paymentout", "cashout", "loss"] as const;
 
 function positiveNumber(value: string | null, fallback: number) {
   const parsed = Number(value);
@@ -20,9 +21,13 @@ export function useExpenses() {
 
   const query = useMemo<ExpensesQuery>(() => {
     const limit = positiveNumber(searchParams.get("limit"), defaultExpensesQuery.limit);
+    const paymentType = searchParams.get("paymentType");
     return {
       dateFrom: searchParams.get("dateFrom") || defaultExpensesQuery.dateFrom,
       dateTo: searchParams.get("dateTo") || defaultExpensesQuery.dateTo,
+      paymentType: paymentTypes.includes(paymentType as typeof paymentTypes[number])
+        ? paymentType as ExpensesQuery["paymentType"]
+        : defaultExpensesQuery.paymentType,
       page: positiveNumber(searchParams.get("page"), defaultExpensesQuery.page),
       limit: limits.includes(limit) ? limit : defaultExpensesQuery.limit,
     };
@@ -37,6 +42,7 @@ export function useExpenses() {
     const params = new URLSearchParams({
       dateFrom: nextQuery.dateFrom,
       dateTo: nextQuery.dateTo,
+      paymentType: nextQuery.paymentType,
       page: String(nextQuery.page),
       limit: String(nextQuery.limit),
     });

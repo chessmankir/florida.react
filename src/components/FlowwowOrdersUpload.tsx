@@ -1,21 +1,24 @@
 "use client";
 
-import { ChangeEvent, useRef, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 
-export function FlowwowOrdersUpload({ shopId, onUploaded }: { shopId: string; onUploaded: () => Promise<void> }) {
+export function FlowwowOrdersUpload({ shopId, shopName, onUploaded }: { shopId: string; shopName: string; onUploaded: () => Promise<void> }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [status, setStatus] = useState<"idle" | "uploading" | "success" | "error">("idle");
+
+  useEffect(() => setStatus("idle"), [shopId]);
 
   async function uploadFile(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
     if (!file) return;
+    const selectedShopId = shopId;
 
     setStatus("uploading");
     const formData = new FormData();
     formData.append("file", file);
 
     try {
-      const response = await fetch(`/api/analytics/flowwow/orders/import?shopId=${encodeURIComponent(shopId)}`, {
+      const response = await fetch(`/api/analytics/flowwow/orders/import?shopId=${encodeURIComponent(selectedShopId)}`, {
         method: "POST",
         body: formData,
       });
@@ -30,10 +33,10 @@ export function FlowwowOrdersUpload({ shopId, onUploaded }: { shopId: string; on
   }
 
   const title = status === "success"
-    ? "Файл загружен"
+    ? `Файл загружен для магазина ${shopName}`
     : status === "error"
       ? "Не удалось загрузить файл"
-      : "Загрузить заказы из XLS";
+      : `Загрузить заказы из XLS для магазина ${shopName}`;
 
   return (
     <>

@@ -5,12 +5,11 @@ import { FlowwowProductsQuery } from "@/store/flowwow-products-store";
 
 type Props = {
   query: FlowwowProductsQuery;
-  shops: Array<{ id: string; name: string; address: string | null }>;
   disabled: boolean;
   onUpdate: (patch: Partial<FlowwowProductsQuery>) => void;
 };
 
-export function FlowwowProductsFilters({ query, shops, disabled, onUpdate }: Props) {
+export function FlowwowProductsFilters({ query, disabled, onUpdate }: Props) {
   const searchTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   function changeSearch(value: string) {
@@ -22,7 +21,7 @@ export function FlowwowProductsFilters({ query, shops, disabled, onUpdate }: Pro
   }
 
   return (
-    <div className="grid gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:grid-cols-2 xl:grid-cols-[minmax(220px,1.4fr)_200px_170px_210px_160px] xl:items-end">
+    <div className="grid gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:grid-cols-2 xl:grid-cols-[minmax(220px,1.4fr)_150px_160px_160px_190px_150px] xl:items-end">
       <label className="text-xs font-semibold text-slate-500">
         Поиск по названию
         <div className="relative mt-1.5">
@@ -41,15 +40,29 @@ export function FlowwowProductsFilters({ query, shops, disabled, onUpdate }: Pro
         </div>
       </label>
       <label className="text-xs font-semibold text-slate-500">
-        Магазин
+        Связь с МойСклад
         <select
-          value={query.shopId}
+          value={query.linkStatus}
           disabled={disabled}
           className="mt-1.5 h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm font-medium text-slate-900 outline-none transition focus:border-emerald-500 disabled:opacity-60"
-          onChange={(event) => onUpdate({ shopId: event.target.value, page: 1 })}
+          onChange={(event) => onUpdate({ linkStatus: event.target.value as FlowwowProductsQuery["linkStatus"], page: 1 })}
         >
-          {shops.length === 0 && <option value={query.shopId}>Магазин {query.shopId}</option>}
-          {shops.map((shop) => <option key={shop.id} value={shop.id}>{shop.address || shop.name || `Магазин ${shop.id}`}</option>)}
+          <option value="all">Все</option>
+          <option value="linked">Связанные</option>
+          <option value="unlinked">Не связанные</option>
+        </select>
+      </label>
+      <label className="text-xs font-semibold text-slate-500">
+        Наличие состава
+        <select
+          value={query.availability}
+          disabled={disabled}
+          className="mt-1.5 h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm font-medium text-slate-900 outline-none transition focus:border-emerald-500 disabled:opacity-60"
+          onChange={(event) => onUpdate({ availability: event.target.value as FlowwowProductsQuery["availability"], page: 1 })}
+        >
+          <option value="all">Все</option>
+          <option value="in_stock">В наличии</option>
+          <option value="out_of_stock">Нет в наличии</option>
         </select>
       </label>
       <label className="text-xs font-semibold text-slate-500">

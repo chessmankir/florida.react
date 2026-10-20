@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { getCurrentMonthRange } from "@/lib/date-range";
+import { AccountMenu } from "@/components/AccountMenu";
 
 function FlowerIcon() {
   return (
@@ -23,7 +24,7 @@ const staticNavigation = [
   },
   {
     label: "Расходы и ДДС",
-    href: "/analytics/expenses?dateFrom=2026-09-01&dateTo=2026-09-30&page=1&limit=10",
+    href: "/analytics/expenses?dateFrom=2026-09-01&dateTo=2026-09-30&paymentType=all&page=1&limit=10",
     match: "/analytics/expenses",
     icon: "₽",
   },
@@ -52,6 +53,7 @@ export function Sidebar() {
           <p className="text-lg font-bold tracking-tight">Florida</p>
           <p className="text-xs text-slate-400">Центр аналитики</p>
         </div>
+        <div className="ml-auto"><AccountMenu variant="sidebar" /></div>
       </div>
 
       <nav aria-label="Основная навигация" className="flex gap-2 overflow-x-auto lg:flex-col">

@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { BundleCalculation, flowwowProductLinksStore, InventoryBundle } from "@/store/flowwow-product-links-store";
 
-export function useFlowwowProductLinks(shopId: string, productId: string, flowwowPrice: number, open: boolean) {
+export function useFlowwowProductLinks(shopId: string, productId: string, productName: string, flowwowPrice: number, open: boolean) {
   const [search, setSearch] = useState("");
   const [options, setOptions] = useState<InventoryBundle[]>([]);
   const [selected, setSelected] = useState<InventoryBundle | null>(null);
@@ -12,6 +12,12 @@ export function useFlowwowProductLinks(shopId: string, productId: string, flowwo
   const [error, setError] = useState<string | null>(null);
   const [calculation, setCalculation] = useState<BundleCalculation | null>(null);
   const [calculationPending, setCalculationPending] = useState(false);
+
+  useEffect(() => {
+    if (!open) return;
+    const initialSearch = productName.trim().split(/\s+/).filter(Boolean).slice(0, 2).join(" ");
+    setSearch(initialSearch);
+  }, [open, productId, productName]);
 
   useEffect(() => {
     if (!open) return;
@@ -42,7 +48,7 @@ export function useFlowwowProductLinks(shopId: string, productId: string, flowwo
     setCalculationPending(true);
     void flowwowProductLinksStore.calculate(selected.id, flowwowPrice)
       .then((value) => { if (active) setCalculation(value); })
-      .catch((reason) => { if (active) setError(reason instanceof Error ? reason.message : "Не удалось рассчитать букет"); })
+      .catch((reason) => { if (active) setError(reason instanceof Error ? reason.message : "Не удалось рассчитать техкарту"); })
       .finally(() => { if (active) setCalculationPending(false); });
     return () => { active = false; };
   }, [flowwowPrice, open, selected]);
@@ -72,7 +78,7 @@ export function useFlowwowProductLinks(shopId: string, productId: string, flowwo
       setCalculation(null);
       return true;
     } catch (reason) {
-      setError(reason instanceof Error ? reason.message : "Не удалось отвязать букет");
+      setError(reason instanceof Error ? reason.message : "Не удалось отвязать техкарту");
       return false;
     } finally {
       setSaving(false);

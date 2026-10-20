@@ -8,9 +8,11 @@ import { FlowwowProductsSyncButton } from "@/components/FlowwowProductsSyncButto
 import { FlowwowProductsView, FlowwowProductsViewToggle } from "@/components/FlowwowProductsViewToggle";
 import { Pagination } from "@/components/Pagination";
 import { useFlowwowProducts } from "@/hooks/useFlowwowProducts";
+import { FlowwowCreateProductDialog } from "@/components/FlowwowCreateProductDialog";
 
 export function FlowwowProductsAnalytics() {
   const [view, setView] = useState<FlowwowProductsView>("grid");
+  const [isCreateOpen, setIsCreateOpen] = useState(false);
   const { query, data, error, isPending, updateQuery, changeVisibility, reload } = useFlowwowProducts();
 
   return (
@@ -19,10 +21,10 @@ export function FlowwowProductsAnalytics() {
         <div><p className="mb-2 text-sm font-semibold uppercase tracking-[0.16em] text-emerald-700">Flowwow</p><h1 className="text-3xl font-bold tracking-tight text-slate-950">Витрина товаров</h1><p className="mt-2 text-sm text-slate-500">Каталог, остатки и показатели товаров магазина</p></div>
         <div className="flex flex-col items-end gap-2">
           <FlowwowProductsSyncButton onSynced={reload} />
-          <FlowwowProductsViewToggle value={view} onChange={setView} />
+          <div className="flex items-center gap-2"><button type="button" onClick={() => setIsCreateOpen(true)} className="h-10 rounded-xl bg-emerald-600 px-4 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700">+ Создать товар</button><FlowwowProductsViewToggle value={view} onChange={setView} /></div>
         </div>
       </div>
-      <div className="mb-5"><FlowwowProductsFilters query={query} shops={data?.shops ?? []} disabled={isPending} onUpdate={updateQuery} /></div>
+      <div className="mb-5"><FlowwowProductsFilters query={query} disabled={isPending} onUpdate={updateQuery} /></div>
       {error ? (
         <div className="rounded-2xl border border-red-200 bg-red-50 p-6 text-sm text-red-700"><p className="font-semibold">Не удалось получить товары Flowwow</p><p className="mt-1">{error}. Проверьте маршрут backend на порту 3025.</p></div>
       ) : view === "grid" ? (
@@ -31,6 +33,7 @@ export function FlowwowProductsAnalytics() {
         <FlowwowProductsList products={data?.items ?? []} pending={isPending} onVisibilityChange={changeVisibility} />
       )}
       {data && <Pagination query={query} total={data.pagination.total} pageCount={data.pagination.totalPages} disabled={isPending} onUpdate={updateQuery} />}
+      <FlowwowCreateProductDialog open={isCreateOpen} shopId={query.shopId} shops={data?.shops ?? []} onClose={() => setIsCreateOpen(false)} onCreated={reload} />
     </section>
   );
 }
