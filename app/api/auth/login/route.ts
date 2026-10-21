@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ message: "Сервер вернул некорректные данные аккаунта" }, { status: 502 });
     }
     const result = NextResponse.json(account);
-    saveAuthSession(result, account.accountId, account.email, account.sessionToken);
+    saveAuthSession(request, result, account.accountId, account.email, account.sessionToken);
     return result;
   } catch {
     return NextResponse.json({ message: "Сервис авторизации недоступен" }, { status: 502 });
