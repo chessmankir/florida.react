@@ -12,7 +12,7 @@ export function proxy(request: NextRequest) {
   );
 
   if (publicPages.has(pathname)) {
-    if (authenticated) return NextResponse.redirect(new URL("/dashboard", request.url));
+    if (authenticated) return NextResponse.redirect(new URL("/analytics/flowwow/orders", request.url));
     return NextResponse.next();
   }
 

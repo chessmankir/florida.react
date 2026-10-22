@@ -15,7 +15,6 @@ function FlowerIcon() {
 }
 
 const staticNavigation = [
-  { label: "Дашборд", href: "/dashboard", icon: "▦" },
   {
     label: "Продажи и товары",
     href: "/analytics/products/profitability?dateFrom=2026-09-01&dateTo=2026-09-30&sortBy=grossProfit&sortDirection=desc&page=1&limit=50",
@@ -34,13 +33,13 @@ export function Sidebar() {
   const pathname = usePathname();
   const currentMonth = getCurrentMonthRange();
   const navigation = [
-    ...staticNavigation,
     {
       label: "Flowwow",
       href: `/analytics/flowwow/orders?dateFrom=${currentMonth.dateFrom}&dateTo=${currentMonth.dateTo}&page=1&limit=50`,
       match: "/analytics/flowwow",
       icon: <FlowerIcon />,
     },
+    ...staticNavigation,
   ];
 
   return (
