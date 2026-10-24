@@ -26,14 +26,14 @@ export function FlowwowTabs() {
     : products.data?.shops ?? [];
   const tabs = [
     {
-      label: "Заказы",
-      href: `/analytics/flowwow/orders?dateFrom=${period.dateFrom}&dateTo=${period.dateTo}&shopId=${encodeURIComponent(shopId)}&page=1&limit=50`,
-      active: pathname.endsWith("/orders"),
-    },
-    {
       label: "Товары",
       href: `/analytics/flowwow/products?shopId=${encodeURIComponent(shopId)}&status=active&linkStatus=all&availability=all&sortBy=sales&sortDirection=desc&page=1&limit=50`,
       active: pathname.endsWith("/products"),
+    },
+    {
+      label: "Заказы",
+      href: `/analytics/flowwow/orders?dateFrom=${period.dateFrom}&dateTo=${period.dateTo}&shopId=${encodeURIComponent(shopId)}&page=1&limit=50`,
+      active: pathname.endsWith("/orders"),
     },
   ];
 

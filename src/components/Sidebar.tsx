@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { getCurrentMonthRange } from "@/lib/date-range";
 import { AccountMenu } from "@/components/AccountMenu";
 
 function FlowerIcon() {
@@ -31,11 +30,10 @@ const staticNavigation = [
 
 export function Sidebar() {
   const pathname = usePathname();
-  const currentMonth = getCurrentMonthRange();
   const navigation = [
     {
       label: "Flowwow",
-      href: `/analytics/flowwow/orders?dateFrom=${currentMonth.dateFrom}&dateTo=${currentMonth.dateTo}&page=1&limit=50`,
+      href: "/analytics/flowwow/products?status=active&linkStatus=all&availability=all&sortBy=sales&sortDirection=desc&page=1&limit=50",
       match: "/analytics/flowwow",
       icon: <FlowerIcon />,
     },

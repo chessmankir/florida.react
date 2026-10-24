@@ -50,7 +50,7 @@ export function AuthForm({ mode }: Props) {
       });
       const payload = await response.json().catch(() => null);
       if (!response.ok) throw new Error(errorMessage(payload, isRegister ? "Не удалось зарегистрироваться" : "Не удалось войти"));
-      router.replace("/analytics/flowwow/orders");
+      router.replace("/analytics/flowwow/products");
       router.refresh();
     } catch (submitError) {
       setError(submitError instanceof Error ? submitError.message : "Произошла ошибка");
