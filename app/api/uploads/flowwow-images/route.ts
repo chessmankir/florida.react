@@ -1,9 +1,10 @@
 import { randomUUID } from "node:crypto";
 import { mkdir, writeFile } from "node:fs/promises";
-import path from "node:path";
+import { join } from "node:path";
 import { NextRequest, NextResponse } from "next/server";
 import sharp from "sharp";
 import { AUTH_SESSION_COOKIE } from "@/lib/auth-session";
+import { flowwowImageDirectory } from "@/lib/flowwow-image-storage";
 
 const acceptedTypes = new Set(["image/jpeg", "image/png", "image/webp"]);
 export async function POST(request: NextRequest) {
@@ -12,14 +13,14 @@ export async function POST(request: NextRequest) {
   if (!(file instanceof File)) return NextResponse.json({ message: "Файл не передан" }, { status: 400 });
   if (!acceptedTypes.has(file.type)) return NextResponse.json({ message: "Поддерживаются JPG, PNG и WebP" }, { status: 400 });
   if (file.size > 10 * 1024 * 1024) return NextResponse.json({ message: "Размер изображения не должен превышать 10 МБ" }, { status: 400 });
-  const name = `${randomUUID()}.jpg`; const directory = path.join(process.cwd(), "public", "uploads", "flowwow");
+  const name = `${randomUUID()}.jpg`; const directory = flowwowImageDirectory();
   const image = await sharp(Buffer.from(await file.arrayBuffer()))
     .rotate()
     .resize(1200, 1200, { fit: "cover", position: "centre" })
     .flatten({ background: "#ffffff" })
     .jpeg({ quality: 90, chromaSubsampling: "4:4:4" })
     .toBuffer();
-  await mkdir(directory, { recursive: true }); await writeFile(path.join(directory, name), image);
+  await mkdir(directory, { recursive: true }); await writeFile(join(directory, name), image);
   const forwardedHost = request.headers.get("x-forwarded-host")?.split(",")[0]?.trim();
   const host = forwardedHost || request.headers.get("host")?.split(",")[0]?.trim();
   const forwardedProto = request.headers.get("x-forwarded-proto")?.split(",")[0]?.trim();
